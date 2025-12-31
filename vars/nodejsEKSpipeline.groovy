@@ -1,4 +1,4 @@
-def call () {
+def call (Map configmap) {
     pipeline {
         agent {
             node {
@@ -13,8 +13,8 @@ def call () {
             COURSE = "DevOps"
             appVersion = "" // defining here empty and can be used for all stages
             ACC_ID = "799345568171"
-            project = "roboshop"
-            component = "catalogue"
+            project = configmap.get('project')
+            component = configmap.get('component')
         }
         stages {
             stage('Read Version') { // This is build stage as example
