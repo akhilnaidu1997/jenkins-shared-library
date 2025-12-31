@@ -13,8 +13,8 @@ def call (Map configmap) {
             COURSE = "DevOps"
             appVersion = "" // defining here empty and can be used for all stages
             ACC_ID = "799345568171"
-            project = configmap.get('project')
-            component = configmap.get('component')
+            project = configmap.get("project")
+            component = configmap.get("component")
         }
         stages {
             stage('Read Version') { // This is build stage as example
