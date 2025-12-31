@@ -141,8 +141,15 @@ def call (Map configmap) {
             //         }
             //     }
             // }
+
         }
-        
+            stage('Trigger Second Job') {
+                steps {
+                    script {
+                        build job: '../catalogue-deploy', wait: false, propagate: false
+                    }
+                }
+            }
         post {
             always {
                 echo 'I will say hello again regardless of build result'
