@@ -109,38 +109,38 @@ def call (Map configmap) {
             //     }
             // }
 
-            stage('Build Image'){ // This is a deploy stage for practice
-                steps {
-                    script {
-                        withAWS(credentials: 'aws-auth') {
-                            sh """
-                                aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
-                                docker build -t ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${project}/${component}:${appVersion} .
-                                docker push ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${project}/${component}:${appVersion}
-                            """
-                        }
-                    }
-                }
-            }
-            stage('Trivy OS Scan (Local Image)') {
-                environment {
-                    IMAGE = "${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${project}/${component}:${appVersion}"
-                }
-                steps {
-                    script {
-                        echo "🔍 Running Trivy OS-only scan on local image: ${IMAGE}"
-                        sh """
-                            trivy image \
-                                --vuln-type os \
-                                --severity HIGH,CRITICAL \
-                                --exit-code 1 \
-                                ${IMAGE}
-                        """
+            // stage('Build Image'){ // This is a deploy stage for practice
+            //     steps {
+            //         script {
+            //             withAWS(credentials: 'aws-auth') {
+            //                 sh """
+            //                     aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com
+            //                     docker build -t ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${project}/${component}:${appVersion} .
+            //                     docker push ${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${project}/${component}:${appVersion}
+            //                 """
+            //             }
+            //         }
+            //     }
+            // }
+            // stage('Trivy OS Scan (Local Image)') {
+            //     environment {
+            //         IMAGE = "${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${project}/${component}:${appVersion}"
+            //     }
+            //     steps {
+            //         script {
+            //             echo "🔍 Running Trivy OS-only scan on local image: ${IMAGE}"
+            //             sh """
+            //                 trivy image \
+            //                     --vuln-type os \
+            //                     --severity HIGH,CRITICAL \
+            //                     --exit-code 1 \
+            //                     ${IMAGE}
+            //             """
 
-                        echo "✅ Trivy scan passed — no HIGH or CRITICAL OS vulnerabilities"
-                    }
-                }
-            }
+            //             echo "✅ Trivy scan passed — no HIGH or CRITICAL OS vulnerabilities"
+            //         }
+            //     }
+            // }
         }
         
         post {
