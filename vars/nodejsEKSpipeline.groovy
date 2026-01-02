@@ -142,7 +142,7 @@ def call (Map configmap) {
             //     }
             // }
 
-        }
+        
             stage('Trigger deployment Job') {
                 steps {
                     script {
@@ -154,6 +154,7 @@ def call (Map configmap) {
                     }
                 }
             }
+        }
         post {
             always {
                 echo 'I will say hello again regardless of build result'
