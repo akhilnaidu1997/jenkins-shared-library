@@ -149,7 +149,7 @@ def call (Map configmap) {
                         build job: '../catalogue-deploy', wait: false, propagate: false
                         parameters: [
                               string(name: 'appVersion', value: "${appVersion}"),
-                              string(name: 'Environment', value: 'dev')
+                              string(name: 'environment', value: 'dev')
                         ]
                     }
                 }
