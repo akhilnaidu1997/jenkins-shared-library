@@ -15,8 +15,8 @@ def call (Map configmap){
             ACC_ID = "799345568171"
             project = configmap.get("project")
             component = configmap.get("component")
-            region = "us-east-1"
-            environment = configmap.get("Environment")
+            REGION = "us-east-1"
+            ENVIRONMENT = configmap.get("environment")
         }
         // parameters {
         //     string(name: 'appVersion', description: 'which version to deploy')
@@ -28,7 +28,7 @@ def call (Map configmap){
                     script {
                         withAWS(region = "us-east-1", credentials = "aws-auth"){
                             sh """
-                                aws eks update-kubeconfig --region ${region} --name ${project}-${environment}
+                                aws eks update-kubeconfig --region ${REGION} --name ${project}-${ENVIRONMENT}
                                 kubectl get nodes
                             """
                         }
