@@ -30,6 +30,7 @@ def call (Map configmap) {
                             sh """
                                 aws eks update-kubeconfig --region ${REGION} --name ${project}-${ENVIRONMENT}
                                 kubectl get nodes
+                                ls -l
                             """
                         }
                     }
