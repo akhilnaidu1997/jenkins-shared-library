@@ -1,4 +1,4 @@
-def call (Map configmap){
+def call (Map configmap) {
     pipeline {
         agent {
             node {
@@ -26,7 +26,7 @@ def call (Map configmap){
             stage('Deploy'){ // This is a test stage
                 steps {
                     script {
-                        withAWS(region = 'us-east-1', credentials = 'aws-auth'){
+                        withAWS(region: 'us-east-1', credentials: 'aws-auth'){
                             sh """
                                 aws eks update-kubeconfig --region ${REGION} --name ${project}-${ENVIRONMENT}
                                 kubectl get nodes
