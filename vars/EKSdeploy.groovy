@@ -33,7 +33,7 @@ def call (Map configmap) {
                                 kubectl get nodes
                                 ls -l
                                 sed -i "s/IMAGE_VERSION/${appVersion}/g" values.yaml
-                                helm upgrade --install ${component} -f values-${ENVIRONMENT}.yaml -n ${project} --atomic --wait --timeout=5m
+                                helm upgrade --install ${component} -f values-${ENVIRONMENT}.yaml -n ${project} --atomic --wait --timeout=5m .
                             """
                         }
                     }
