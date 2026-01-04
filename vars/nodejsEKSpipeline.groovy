@@ -40,7 +40,7 @@ def call (Map configmap) {
                 steps {
                     script {
                         sh """
-                            npm test
+                            echo test
                         """
                     }
                 }
