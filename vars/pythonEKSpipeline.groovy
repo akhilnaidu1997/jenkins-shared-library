@@ -29,7 +29,7 @@ def call (Map configmap) {
                 steps {
                     script {
                         sh """
-                            pip3 install -r requirements.txt
+                            pip3 install -r files/requirements.txt
                         """
                     }
                 }
