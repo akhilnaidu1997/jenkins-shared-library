@@ -34,8 +34,7 @@ def call (Map configmap) {
                                 ls -l
                                 echo ${appVersion}
                                 sed -i "s/IMAGE_VERSION/${appVersion}/g" values.yaml
-                                cat values.yaml
-                                helm upgrade --install ${component} -f values-${ENVIRONMENT}.yaml --set-string image.tag=${appVersion} -n ${project} --atomic --wait --timeout=5m --force .
+                                helm upgrade --install ${component} -f values-${ENVIRONMENT}.yaml -n ${project} --atomic --wait --timeout=5m .
                             """
                         }
                     }
