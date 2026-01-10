@@ -45,69 +45,69 @@ def call (Map configmap) {
                     }
                 }
             }
-            //static source code analysis and SAST
-            // stage('Code Analysis') {
-            //     environment { // this block is to select the version of sonar tool
-            //         def scannerHome = tool 'sonar' //name should be same
-            //     }
-            //     steps {
-            //         script {
-            //             withSonarQubeEnv('sonar') { //this block gets the sonar sever access 
-            //             // also this sonar-scnner tools will get access read code and send report to server using host url and token
-            //                 sh """
-            //                     ${scannerHome}/bin/sonar-scanner \
-            //                 """
-            //             }
-            //         }
-            //     }
-            // }
-            // stage('Quality Gate') {
-            //     steps {
-            //         timeout(time: 1, unit: 'HOURS') {
-            //             waitForQualityGate abortPipeline: true
-            //         }
-            //     }
-            // }
-            // stage('Dependabot Vulnerability Check') {
-            //     environment {
-            //         GITHUB_TOKEN = credentials('git-auth')
-            //         OWNER = 'akhilnaidu1997'
-            //         REPO  = 'catalogue'
-            //     }
-            //     steps {
-            //         script {
-            //             echo "🔍 Checking Dependabot alerts for ${OWNER}/${REPO}"
+            // static source code analysis and SAST
+            stage('Code Analysis') {
+                environment { // this block is to select the version of sonar tool
+                    def scannerHome = tool 'sonar' //name should be same
+                }
+                steps {
+                    script {
+                        withSonarQubeEnv('sonar') { //this block gets the sonar sever access 
+                        // also this sonar-scnner tools will get access read code and send report to server using host url and token
+                            sh """
+                                ${scannerHome}/bin/sonar-scanner \
+                            """
+                        }
+                    }
+                }
+            }
+            stage('Quality Gate') {
+                steps {
+                    timeout(time: 1, unit: 'HOURS') {
+                        waitForQualityGate abortPipeline: true
+                    }
+                }
+            }
+            stage('Dependabot Vulnerability Check') {
+                environment {
+                    GITHUB_TOKEN = credentials('git-auth')
+                    OWNER = 'akhilnaidu1997'
+                    REPO  = 'catalogue'
+                }
+                steps {
+                    script {
+                        echo "🔍 Checking Dependabot alerts for ${OWNER}/${REPO}"
 
-            //             def response = sh(
-            //                 script: """
-            //                 curl -s -H "Authorization: Bearer ${GITHUB_TOKEN}" \
-            //                     -H "Accept: application/vnd.github+json" \
-            //                     https://api.github.com/repos/${OWNER}/${REPO}/dependabot/alerts
-            //                 """,
-            //                 returnStdout: true
-            //             ).trim()
+                        def response = sh(
+                            script: """
+                            curl -s -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+                                -H "Accept: application/vnd.github+json" \
+                                https://api.github.com/repos/${OWNER}/${REPO}/dependabot/alerts
+                            """,
+                            returnStdout: true
+                        ).trim()
 
-            //             writeFile file: 'dependabot-alerts.json', text: response
+                        writeFile file: 'dependabot-alerts.json', text: response
 
-            //             def count = sh(
-            //                 script: """
-            //                 jq '[.[] | select(
-            //                     .state=="open" and
-            //                     (.security_advisory.severity=="high" or
-            //                     .security_advisory.severity=="critical")
-            //                 )] | length' dependabot-alerts.json
-            //                 """,
-            //                 returnStdout: true
-            //             ).trim()
+                        def count = sh(
+                            script: """
+                            jq '[.[] | select(
+                                .state=="open" and
+                                (.security_advisory.severity=="high" or
+                                .security_advisory.severity=="critical")
+                            )] | length' dependabot-alerts.json
+                            """,
+                            returnStdout: true
+                        ).trim()
 
-            //             if (count.toInteger() > 0) {
-            //                 error "❌ BLOCKING PIPELINE: ${count} HIGH/CRITICAL open Dependabot vulnerabilities found"
-            //             } else {
-            //                 echo "✅ No HIGH or CRITICAL open vulnerabilities found. Proceeding..."
-            //             }
-            //         }
-            //     }
-            // }
+                        if (count.toInteger() > 0) {
+                            error "❌ BLOCKING PIPELINE: ${count} HIGH/CRITICAL open Dependabot vulnerabilities found"
+                        } else {
+                            echo "✅ No HIGH or CRITICAL open vulnerabilities found. Proceeding..."
+                        }
+                    }
+                }
+            }
 
             stage('Build Image'){ // This is a deploy stage for practice
                 steps {
@@ -122,25 +122,25 @@ def call (Map configmap) {
                     }
                 }
             }
-            // stage('Trivy OS Scan (Local Image)') {
-            //     environment {
-            //         IMAGE = "${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${project}/${component}:${appVersion}"
-            //     }
-            //     steps {
-            //         script {
-            //             echo "🔍 Running Trivy OS-only scan on local image: ${IMAGE}"
-            //             sh """
-            //                 trivy image \
-            //                     --vuln-type os \
-            //                     --severity HIGH,CRITICAL \
-            //                     --exit-code 1 \
-            //                     ${IMAGE}
-            //             """
+            stage('Trivy OS Scan (Local Image)') {
+                environment {
+                    IMAGE = "${ACC_ID}.dkr.ecr.us-east-1.amazonaws.com/${project}/${component}:${appVersion}"
+                }
+                steps {
+                    script {
+                        echo "🔍 Running Trivy OS-only scan on local image: ${IMAGE}"
+                        sh """
+                            trivy image \
+                                --vuln-type os \
+                                --severity HIGH,CRITICAL \
+                                --exit-code 1 \
+                                ${IMAGE}
+                        """
 
-            //             echo "✅ Trivy scan passed — no HIGH or CRITICAL OS vulnerabilities"
-            //         }
-            //     }
-            // }
+                        echo "✅ Trivy scan passed — no HIGH or CRITICAL OS vulnerabilities"
+                    }
+                }
+            }
 
         
             stage('Trigger deployment Job') {
