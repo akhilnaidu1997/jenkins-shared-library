@@ -24,6 +24,11 @@ def call (Map configmap) {
         // }
         stages{
             stage('Deploy'){ // This is a test stage
+                when {
+                    expression {
+                        ENVIRONMENT == "dev" || ENVIRONMENT == "qa" || ENVIRONMENT == "prod"
+                    }
+                }
                 steps {
                     script {
                         withAWS(region: 'us-east-1', credentials: 'aws-auth'){
@@ -38,6 +43,34 @@ def call (Map configmap) {
                                 helm upgrade --install ${component} -f values-${ENVIRONMENT}.yaml -n ${project} --atomic --wait --timeout=5m .
                             """
                         }
+                    }
+                }
+            }
+            stage('Functional Testing') {
+                when {
+                    expression {
+                        ENVIRONMENT == "dev"
+                    }
+                }
+                steps {
+                    script {
+                        sh """
+                            echo "Functional Testing"
+                        """
+                    }
+                }
+            }
+            stage('Integration Testing') {
+                when {
+                    expression {
+                        ENVIRONMENT == "qa"
+                    }
+                }
+                steps {
+                    script {
+                        sh """
+                            echo "Integration Testing"
+                        """
                     }
                 }
             }
